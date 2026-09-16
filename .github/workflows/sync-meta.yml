@@ -1,0 +1,57 @@
+name: 同步 meta 文件
+
+# 只要 CSR-Hunter.user.js 有变动，就重新生成 CSR-Hunter.meta.js 并提交回仓库。
+# 这样 @updateURL 指向的那份文件永远是新的，用户才不会因为 meta 过期而收不到更新。
+# 注意：本工作流只提交 .meta.js，不匹配下面的 paths 过滤条件，因此不会自我循环触发。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'CSR-Hunter.user.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 语法检查
+        run: node --check CSR-Hunter.user.js
+
+      - name: 生成 CSR-Hunter.meta.js
+        run: node scripts/sync-meta.mjs
+
+      - name: 提交变更
+        id: commit
+        run: |
+          if [ -z "$(git status --porcelain CSR-Hunter.meta.js)" ]; then
+            echo "meta 文件无变化，跳过提交"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CSR-Hunter.meta.js
+          git commit -m "chore: 同步 CSR-Hunter.meta.js"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: 清除 jsDelivr 缓存
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          for f in CSR-Hunter.meta.js CSR-Hunter.user.js; do
+            echo "purge -> $f"
+            curl -sS "https://purge.jsdelivr.net/gh/DMUCD/CSR-Hunter@main/$f" || true
+            echo
+          done
