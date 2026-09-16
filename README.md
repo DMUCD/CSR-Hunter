@@ -11,7 +11,7 @@
 
 ## 安装脚本
 
-**第一步：**安装脚本管理器 [**Tampermonkey**](https://www.tampermonkey.net/) 或 [**ScriptCat**](https://scriptcat.org/) ；
+**第一步：** 安装脚本管理器 [**Tampermonkey**](https://www.tampermonkey.net/) 或 [**ScriptCat**](https://scriptcat.org/) ；
 
 **第二步：**点此安装本脚本**➡ [安装 CSR Hunter](https://cdn.jsdelivr.net/gh/DMUCD/CSR-Hunter@main/CSR-Hunter.user.js)**，在弹出界面确认「安装」即可。
 
@@ -21,14 +21,14 @@
 
 ## 搜索资源
 
-**第一步：**打开 [DMUCD Links](https://dmucd.github.io/)，网页右下角会出现黄连表情悬浮球；
+**第一步：** 打开 [DMUCD Links](https://dmucd.github.io/)，网页右下角会出现黄连表情悬浮球；
 
 > [!TIP]
 > 为避免悬浮球干扰用户，该脚本仅在打开 [DMUCD Links](https://dmucd.github.io/) 网站时加载。
 
-**第二步：**点击悬浮球，弹出搜索面板，在输入框中输入关键词；
+**第二步：** 点击悬浮球，弹出搜索面板，在输入框中输入关键词；
 
-**第三步：**点击对应检索渠道图标，新标签页即呈现跨站检索结果。
+**第三步：** 点击对应检索渠道图标，新标签页即呈现跨站检索结果。
 
 > [!NOTE]
 > 图标从左到右依次对应：Windows、Android、macOS、游戏、DMUCD、吾爱破解、Anti-MKD
