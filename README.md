@@ -13,7 +13,7 @@
 
 **第一步：** 安装脚本管理器 [**Tampermonkey**](https://www.tampermonkey.net/) 或 [**ScriptCat**](https://scriptcat.org/) ；
 
-**第二步：点此安装本脚本 ➡ [安装 CSR Hunter](https://cdn.jsdelivr.net/gh/DMUCD/CSR-Hunter@main/CSR-Hunter.user.js)**，在弹出界面确认「安装」即可。
+**第二步：** 点此安装本脚本 ➡ [安装 CSR Hunter](https://cdn.jsdelivr.net/gh/DMUCD/CSR-Hunter@main/CSR-Hunter.user.js)，在弹出界面确认「安装」即可。
 
 > **手动安装**：在本仓库下载 `CSR-Hunter.user.js`，在脚本管理器里「新建脚本」，选择「本地导入」该文件。
 
