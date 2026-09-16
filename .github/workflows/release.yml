@@ -1,0 +1,65 @@
+name: 发布
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要发布的 tag（必须与头部 @version 一致，例如 v4.4）'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 语法检查
+        run: node --check CSR-Hunter.user.js
+
+      - name: 校验 tag 与 @version 一致
+        run: node scripts/sync-meta.mjs --check-tag "${{ github.event.inputs.tag || github.ref_name }}"
+
+      - name: 生成 meta 文件（确保发布附件与源码一致）
+        run: node scripts/sync-meta.mjs
+
+      # 幂等：既支持「先用命令行打 tag，由本工作流创建 Release」，
+      # 也支持「在 GitHub 网页端 Releases 页面直接发布」——后者会先建好 Release 再触发本工作流，
+      # 此时直接 create 会因为 Release 已存在而报错，故改为覆盖上传附件。
+      - name: 创建或补全 GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG 已存在（可能是网页端发布），改为覆盖上传脚本附件"
+            gh release upload "$TAG" CSR-Hunter.user.js CSR-Hunter.meta.js --clobber
+          else
+            gh release create "$TAG" \
+              --title "CSR Hunter $TAG" \
+              --generate-notes \
+              CSR-Hunter.user.js \
+              CSR-Hunter.meta.js
+          fi
+
+      - name: 清除 jsDelivr 缓存
+        run: |
+          for f in CSR-Hunter.meta.js CSR-Hunter.user.js; do
+            echo "purge -> $f"
+            curl -sS "https://purge.jsdelivr.net/gh/DMUCD/CSR-Hunter@main/$f" || true
+            echo
+          done
